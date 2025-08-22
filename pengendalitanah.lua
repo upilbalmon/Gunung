@@ -60,8 +60,8 @@ local CreateButton = createButton(35, 40, "Create")
 local DownButton = createButton(80, 30, "↓")
 
 -- Default values
-local length = 1000
-local width = 1000
+local length = 50
+local width = 50
 local height = 0.1
 local offset = 0
 
