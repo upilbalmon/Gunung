@@ -70,6 +70,51 @@ local function clamp(n, lo, hi)
 	return n
 end
 
+-- ====== HINT GUI SINGKAT ======
+local hintGui
+local function showHint()
+	if hintGui then hintGui:Destroy() end
+	hintGui = Instance.new("ScreenGui")
+	hintGui.Name = "DroneHintGui"
+	hintGui.ResetOnSpawn = false
+	hintGui.IgnoreGuiInset = true
+	hintGui.DisplayOrder = 10
+
+	local frame = Instance.new("Frame")
+	frame.Parent = hintGui
+	frame.AnchorPoint = Vector2.new(1, 1)
+	frame.Position = UDim2.new(1, -12, 1, -12)
+	frame.Size = UDim2.new(0, 380, 0, 140)
+	frame.BackgroundTransparency = 0.25
+	frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+	frame.BorderSizePixel = 0
+
+	local pad = Instance.new("UIPadding", frame)
+	pad.PaddingTop = UDim.new(0, 10)
+	pad.PaddingBottom = UDim.new(0, 10)
+	pad.PaddingLeft = UDim.new(0, 12)
+	pad.PaddingRight = UDim.new(0, 12)
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Parent = frame
+	lbl.BackgroundTransparency = 1
+	lbl.Font = Enum.Font.Gotham
+	lbl.TextSize = 14
+	lbl.TextColor3 = Color3.fromRGB(235, 235, 235)
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.TextYAlignment = Enum.TextYAlignment.Top
+	lbl.TextWrapped = true
+	lbl.Size = UDim2.new(1, 0, 1, 0)
+	lbl.Text = table.concat({
+		"DRONE VIEW AKTIF (V untuk keluar)",
+		"Rotasi: DRAG sisi kanan layar (touchpad look bawaan)",
+		"Gerak: WASD, Naik/Turun: E/Q (opsional)",
+		"Shift/Ctrl: cepat/pelan • Z/X: FOV ± • R: reset pitch",
+	}, "\n")
+
+	hintGui.Parent = player:WaitForChild("PlayerGui")
+end
+
 -- ====== RENDER HOOK ======
 local bindName = "DroneAfterCamera"
 local renderBound = false
@@ -191,9 +236,9 @@ local function createGui()
 	-- Tombol untuk mengaktifkan/mematikan drone
 	local button = Instance.new("TextButton")
 	button.Parent = screenGui
-	button.Size = UDim2.new(0, 60, 0, 30)
-	button.Position = UDim2.new(0.5, -10, 0.5, -25)  -- Tengah layar
-	button.Text = "Drone"
+	button.Size = UDim2.new(0, 200, 0, 50)
+	button.Position = UDim2.new(0.5, -100, 0.5, -25)  -- Tengah layar
+	button.Text = "Aktifkan Drone"
 	button.TextSize = 24
 	button.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
