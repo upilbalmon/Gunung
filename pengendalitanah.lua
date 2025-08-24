@@ -60,8 +60,8 @@ local CreateButton = createButton(35, 40, "Create")
 local DownButton = createButton(80, 30, "↓")
 
 -- Default values
-local length = 50
-local width = 50
+local length = 500
+local width = 500
 local height = 0.1
 local offset = 0
 
@@ -81,6 +81,7 @@ local function createFloor()
     createdFloor.Position = position
     createdFloor.Anchored = true
     createdFloor.Color = Color3.fromRGB(100, 100, 100)
+    createdFloor.Transparency = 0.3
     createdFloor.Material = Enum.Material.SmoothPlastic
     createdFloor.Parent = workspace
 end
