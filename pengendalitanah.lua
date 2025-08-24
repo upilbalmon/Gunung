@@ -81,7 +81,7 @@ local function createFloor()
     createdFloor.Position = position
     createdFloor.Anchored = true
     createdFloor.Color = Color3.fromRGB(0, 0, 0)
-    createdFloor.Transparency = 0.7
+    createdFloor.Transparency = 0.1
     createdFloor.Material = Enum.Material.SmoothPlastic
     createdFloor.Parent = workspace
 end
