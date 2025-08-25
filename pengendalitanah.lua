@@ -23,7 +23,7 @@ Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BackgroundTransparency = 0.9
 Frame.Parent = MainFrame
 Frame.Draggable = false
-Frame.Active = true
+Frame.Active = false
 
 -- Add rounded corners
 local UICorner = Instance.new("UICorner")
