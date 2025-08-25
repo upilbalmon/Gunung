@@ -5,6 +5,7 @@ local player = game.Players.LocalPlayer
 -- GUI Setup
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "LocationSaverGui"
+ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
 -- Frame container
