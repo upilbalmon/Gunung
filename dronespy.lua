@@ -236,21 +236,30 @@ local function createGui()
 	-- Tombol untuk mengaktifkan/mematikan drone
 	local button = Instance.new("TextButton")
 	button.Parent = screenGui
-	button.Size = UDim2.new(0, 200, 0, 50)
-	button.Position = UDim2.new(0.5, -100, 0.5, -25)  -- Tengah layar
-	button.Text = "Aktifkan Drone"
-	button.TextSize = 24
-	button.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+	button.Size = UDim2.new(0, 40, 0, 40) -- ukuran kecil 65x35
+    button.Position = UDim2.new(1, -70, 0.12, 0)
+	button.Text = "DRN"
+	button.TextSize = 8
+	button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.BackgroundTransparency = 0.3	
+	
+	-- Tambahkan round corner
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 6)
+corner.Parent = button
 
 	-- Menambahkan event handler untuk klik tombol
 	button.MouseButton1Click:Connect(function()
 		if droneEnabled then
 			disableDrone()
-			button.Text = "Aktifkan Drone"
+			button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			button.BackgroundTransparency = 0.3
+			
 		else
 			enableDrone()
-			button.Text = "Matikan Drone"
+			button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+			button.BackgroundTransparency = 0.3
 		end
 	end)
 end
