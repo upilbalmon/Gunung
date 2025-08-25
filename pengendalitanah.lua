@@ -41,9 +41,9 @@ local function createButton(yPosition, size, text)
     button.Text = text
     button.Font = Enum.Font.Gotham
     button.TextSize = 12
-    button.TextColor3 = Color3.fromRGB(220, 220, 220)
+    button.TextColor3 = Color3.fromRGB(0, 0, 0)
     button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    button.BackgroundTransparency = 0.3
+    button.BackgroundTransparency = 0.5
     button.BorderSizePixel = 0
     button.Parent = ButtonsContainer
     
@@ -56,7 +56,7 @@ end
 
 -- Create buttons
 local UpButton = createButton(0, 30, "↑")
-local CreateButton = createButton(35, 40, "Create")
+local CreateButton = createButton(35, 40, "FLOOR")
 local DownButton = createButton(80, 30, "↓")
 
 -- Default values
