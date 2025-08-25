@@ -22,7 +22,7 @@ Frame.Position = UDim2.new(0.8, -45, 0.6, -25)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BackgroundTransparency = 0.9
 Frame.Parent = MainFrame
-Frame.Draggable = true
+Frame.Draggable = false
 Frame.Active = true
 
 -- Add rounded corners
