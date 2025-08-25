@@ -7,7 +7,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 local createdFloor = nil  -- To store the created floor
 
 -- Hapus GUI lama bila ada
-local OLD = playerGui:FindFirstChild("TeleportBidikGUI")
+local OLD = playerGui:FindFirstChild("FloorCreatorGUI")
 if OLD then OLD:Destroy() end
 
 --// GUI
