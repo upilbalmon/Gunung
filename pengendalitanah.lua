@@ -6,6 +6,10 @@ local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local createdFloor = nil  -- To store the created floor
 
+-- Hapus GUI lama bila ada
+local OLD = playerGui:FindFirstChild("TeleportBidikGUI")
+if OLD then OLD:Destroy() end
+
 --// GUI
 local MainFrame = Instance.new("ScreenGui")
 MainFrame.Name = "FloorCreatorGUI"
@@ -41,8 +45,8 @@ local function createButton(yPosition, size, text)
     button.Text = text
     button.Font = Enum.Font.Gotham
     button.TextSize = 12
-    button.TextColor3 = Color3.fromRGB(0, 0, 0)
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.TextColor3 = Color3.fromRGB(250, 250, 250)
+    button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     button.BackgroundTransparency = 0.5
     button.BorderSizePixel = 0
     button.Parent = ButtonsContainer
