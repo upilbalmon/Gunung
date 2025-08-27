@@ -21,7 +21,7 @@ local KEY_FOV_DEC = Enum.KeyCode.Z
 local KEY_FOV_INC = Enum.KeyCode.X
 local KEY_RESET_ORI = Enum.KeyCode.R
 
-local BASE_SPEED  = 40   -- studs/detik
+local BASE_SPEED  = 25   -- studs/detik
 local FAST_MULT   = 3
 local SLOW_MULT   = 0.35
 local ACCEL       = 10   -- smoothing translasi
