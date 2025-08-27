@@ -1,13 +1,13 @@
---[[ DRONE VIEW / FREECAM PENGINTAI — VERSI MOBILE ROBLOX DENGAN GUI BUTTON ]]
-
+--// Services
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 local camera = workspace.CurrentCamera
 
--- ====== KONFIG ======
+-- ====== KONFIG DRONE VIEW ======
 local TOGGLE_KEY = Enum.KeyCode.V
 local KEY_FORWARD = Enum.KeyCode.W
 local KEY_BACK    = Enum.KeyCode.S
@@ -27,7 +27,7 @@ local SLOW_MULT   = 0.35
 local ACCEL       = 10   -- smoothing translasi
 local FOV_MIN, FOV_MAX = 30, 100
 
--- ====== STATE ======
+-- ====== STATE DRONE ======
 local droneEnabled = false
 local move = {fwd = 0, right = 0, up = 0}
 local speedMultFast, speedMultSlow = 1, 1
@@ -48,6 +48,16 @@ local saved = {
 }
 
 local controls -- PlayerModule controls
+
+-- ====== VIRTUAL KEYBOARD STATE ======
+local wPressed = false
+local sPressed = false
+local aPressed = false
+local dPressed = false
+local ePressed = false
+local qPressed = false
+local shiftPressed = false
+local ctrlPressed = false
 
 -- ====== UTIL ======
 local function getPlayerModuleControls()
@@ -152,7 +162,7 @@ local function unbindRender()
 	end
 end
 
--- ====== ENABLE/DISABLE ======
+-- ====== ENABLE/DISABLE DRONE ======
 local function enableDrone()
 	if droneEnabled then return end
 	droneEnabled = true
@@ -228,16 +238,364 @@ local function disableDrone()
 	if hintGui then hintGui:Destroy() hintGui = nil end
 end
 
--- ====== GUI BUTTON ======
-local function createGui()
+-- ====== VIRTUAL KEYBOARD FUNCTIONS ======
+local function updateDroneMovementFromVirtualKeys()
+    if not droneEnabled then return end
+    
+    -- Update movement based on virtual keyboard state
+    move.fwd = 0
+    move.right = 0
+    move.up = 0
+    
+    if wPressed then move.fwd = 1 end
+    if sPressed then move.fwd = -1 end
+    if aPressed then move.right = -1 end
+    if dPressed then move.right = 1 end
+    if ePressed then move.up = 1 end
+    if qPressed then move.up = -1 end
+    
+    -- Update speed multipliers
+    speedMultFast = shiftPressed and FAST_MULT or 1
+    speedMultSlow = ctrlPressed and SLOW_MULT or 1
+end
+
+-- ====== CREATE VIRTUAL KEYBOARD GUI ======
+local function createVirtualKeyboard()
 	local screenGui = Instance.new("ScreenGui")
-	screenGui.Parent = player:WaitForChild("PlayerGui")
+	screenGui.Name = "VirtualKeyboardGUI"
+	screenGui.Parent = playerGui
+	screenGui.ResetOnSpawn = false
+
+	local Frame = Instance.new("Frame")
+	Frame.Size = UDim2.new(0, 200, 0, 200)
+	Frame.Position = UDim2.new(0.7, 0, 0.5, -100)
+	Frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+	Frame.BackgroundTransparency = 0.3
+	Frame.Parent = screenGui
+	Frame.Draggable = true
+	Frame.Active = true
+
+	local MinimizeButton = Instance.new("TextButton")
+	MinimizeButton.Size = UDim2.new(0, 10, 0, 10)
+	MinimizeButton.Position = UDim2.new(0.7, -20, 0.1, 0)
+	MinimizeButton.Text = "-"
+	MinimizeButton.Font = Enum.Font.SourceSansBold
+	MinimizeButton.TextSize = 7
+	MinimizeButton.TextColor3 = Color3.new(1, 1, 1)
+	MinimizeButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
+	MinimizeButton.Parent = Frame
+
+	local CloseButton = Instance.new("TextButton")
+	CloseButton.Size = UDim2.new(0, 10, 0, 10)
+	CloseButton.Position = UDim2.new(0.85, -20, 0.1, 0)
+	CloseButton.Text = "X"
+	CloseButton.Font = Enum.Font.SourceSansBold
+	CloseButton.TextSize = 7
+	CloseButton.TextColor3 = Color3.new(1, 1, 1)
+	CloseButton.BackgroundColor3 = Color3.new(0.8, 0, 0)
+	CloseButton.Parent = Frame
+
+	-- Tombol W (atas)
+	local wButton = Instance.new("TextButton")
+	wButton.Name = "WButton"
+	wButton.Size = UDim2.new(0, 40, 0, 40)
+	wButton.Position = UDim2.new(0.5, -20, 0.2, 0)
+	wButton.AnchorPoint = Vector2.new(0.5, 0)
+	wButton.Text = "W"
+	wButton.TextSize = 16
+	wButton.Font = Enum.Font.GothamBold
+	wButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	wButton.TextColor3 = Color3.new(1, 1, 1)
+	wButton.BorderSizePixel = 0
+	wButton.Parent = Frame
+
+	-- Tombol A (kiri)
+	local aButton = Instance.new("TextButton")
+	aButton.Name = "AButton"
+	aButton.Size = UDim2.new(0, 40, 0, 40)
+	aButton.Position = UDim2.new(0.2, 0, 0.5, -20)
+	aButton.AnchorPoint = Vector2.new(0, 0.5)
+	aButton.Text = "A"
+	aButton.TextSize = 16
+	aButton.Font = Enum.Font.GothamBold
+	aButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	aButton.TextColor3 = Color3.new(1, 1, 1)
+	aButton.BorderSizePixel = 0
+	aButton.Parent = Frame
+
+	-- Tombol S (bawah)
+	local sButton = Instance.new("TextButton")
+	sButton.Name = "SButton"
+	sButton.Size = UDim2.new(0, 40, 0, 40)
+	sButton.Position = UDim2.new(0.5, -20, 0.5, -20)
+	sButton.AnchorPoint = Vector2.new(0.5, 0.5)
+	sButton.Text = "S"
+	sButton.TextSize = 16
+	sButton.Font = Enum.Font.GothamBold
+	sButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	sButton.TextColor3 = Color3.new(1, 1, 1)
+	sButton.BorderSizePixel = 0
+	sButton.Parent = Frame
+
+	-- Tombol D (kanan)
+	local dButton = Instance.new("TextButton")
+	dButton.Name = "DButton"
+	dButton.Size = UDim2.new(0, 40, 0, 40)
+	dButton.Position = UDim2.new(0.8, -40, 0.5, -20)
+	dButton.AnchorPoint = Vector2.new(1, 0.5)
+	dButton.Text = "D"
+	dButton.TextSize = 16
+	dButton.Font = Enum.Font.GothamBold
+	dButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	dButton.TextColor3 = Color3.new(1, 1, 1)
+	dButton.BorderSizePixel = 0
+	dButton.Parent = Frame
+
+	-- Tombol E (naik)
+	local eButton = Instance.new("TextButton")
+	eButton.Name = "EButton"
+	eButton.Size = UDim2.new(0, 35, 0, 35)
+	eButton.Position = UDim2.new(0.8, 0, 0.2, 0)
+	eButton.Text = "E"
+	eButton.TextSize = 14
+	eButton.Font = Enum.Font.GothamBold
+	eButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	eButton.TextColor3 = Color3.new(1, 1, 1)
+	eButton.BorderSizePixel = 0
+	eButton.Parent = Frame
+
+	-- Tombol Q (turun)
+	local qButton = Instance.new("TextButton")
+	qButton.Name = "QButton"
+	qButton.Size = UDim2.new(0, 35, 0, 35)
+	qButton.Position = UDim2.new(0.2, -35, 0.2, 0)
+	qButton.Text = "Q"
+	qButton.TextSize = 14
+	qButton.Font = Enum.Font.GothamBold
+	qButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	qButton.TextColor3 = Color3.new(1, 1, 1)
+	qButton.BorderSizePixel = 0
+	qButton.Parent = Frame
+
+	-- Tombol Shift (cepat)
+	local shiftButton = Instance.new("TextButton")
+	shiftButton.Name = "ShiftButton"
+	shiftButton.Size = UDim2.new(0, 50, 0, 25)
+	shiftButton.Position = UDim2.new(0.2, 0, 0.8, 0)
+	shiftButton.Text = "SHIFT"
+	shiftButton.TextSize = 10
+	shiftButton.Font = Enum.Font.GothamBold
+	shiftButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	shiftButton.TextColor3 = Color3.new(1, 1, 1)
+	shiftButton.BorderSizePixel = 0
+	shiftButton.Parent = Frame
+
+	-- Tombol Ctrl (pelan)
+	local ctrlButton = Instance.new("TextButton")
+	ctrlButton.Name = "CtrlButton"
+	ctrlButton.Size = UDim2.new(0, 50, 0, 25)
+	ctrlButton.Position = UDim2.new(0.8, -50, 0.8, 0)
+	ctrlButton.Text = "CTRL"
+	ctrlButton.TextSize = 10
+	ctrlButton.Font = Enum.Font.GothamBold
+	ctrlButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	ctrlButton.TextColor3 = Color3.new(1, 1, 1)
+	ctrlButton.BorderSizePixel = 0
+	ctrlButton.Parent = Frame
+
+	-- Fungsi untuk tombol W
+	wButton.MouseButton1Down:Connect(function()
+		wPressed = true
+		wButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	wButton.MouseButton1Up:Connect(function()
+		wPressed = false
+		wButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	wButton.MouseLeave:Connect(function()
+		if wPressed then
+			wPressed = false
+			wButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol S
+	sButton.MouseButton1Down:Connect(function()
+		sPressed = true
+		sButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	sButton.MouseButton1Up:Connect(function()
+		sPressed = false
+		sButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	sButton.MouseLeave:Connect(function()
+		if sPressed then
+			sPressed = false
+			sButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol A
+	aButton.MouseButton1Down:Connect(function()
+		aPressed = true
+		aButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	aButton.MouseButton1Up:Connect(function()
+		aPressed = false
+		aButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	aButton.MouseLeave:Connect(function()
+		if aPressed then
+			aPressed = false
+			aButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol D
+	dButton.MouseButton1Down:Connect(function()
+		dPressed = true
+		dButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	dButton.MouseButton1Up:Connect(function()
+		dPressed = false
+		dButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	dButton.MouseLeave:Connect(function()
+		if dPressed then
+			dPressed = false
+			dButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol E
+	eButton.MouseButton1Down:Connect(function()
+		ePressed = true
+		eButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	eButton.MouseButton1Up:Connect(function()
+		ePressed = false
+		eButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	eButton.MouseLeave:Connect(function()
+		if ePressed then
+			ePressed = false
+			eButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol Q
+	qButton.MouseButton1Down:Connect(function()
+		qPressed = true
+		qButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	qButton.MouseButton1Up:Connect(function()
+		qPressed = false
+		qButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	qButton.MouseLeave:Connect(function()
+		if qPressed then
+			qPressed = false
+			qButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol Shift
+	shiftButton.MouseButton1Down:Connect(function()
+		shiftPressed = true
+		shiftButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	shiftButton.MouseButton1Up:Connect(function()
+		shiftPressed = false
+		shiftButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	shiftButton.MouseLeave:Connect(function()
+		if shiftPressed then
+			shiftPressed = false
+			shiftButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol Ctrl
+	ctrlButton.MouseButton1Down:Connect(function()
+		ctrlPressed = true
+		ctrlButton.BackgroundColor3 = Color3.new(0.6, 0.6, 0.6)
+	end)
+
+	ctrlButton.MouseButton1Up:Connect(function()
+		ctrlPressed = false
+		ctrlButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+	end)
+
+	ctrlButton.MouseLeave:Connect(function()
+		if ctrlPressed then
+			ctrlPressed = false
+			ctrlButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+		end
+	end)
+
+	-- Fungsi untuk tombol Minimize/Maximize
+	local minimized = false
+	local originalSize = Frame.Size
+	local minimizedSize = UDim2.new(0, 70, 0, 20)
+
+	MinimizeButton.MouseButton1Click:Connect(function()
+		minimized = not minimized
+		if minimized then
+			Frame.Size = minimizedSize
+			MinimizeButton.Text = "+"
+			wButton.Visible = false
+			sButton.Visible = false
+			aButton.Visible = false
+			dButton.Visible = false
+			eButton.Visible = false
+			qButton.Visible = false
+			shiftButton.Visible = false
+			ctrlButton.Visible = false
+		else
+			Frame.Size = originalSize
+			MinimizeButton.Text = "-"
+			wButton.Visible = true
+			sButton.Visible = true
+			aButton.Visible = true
+			dButton.Visible = true
+			eButton.Visible = true
+			qButton.Visible = true
+			shiftButton.Visible = true
+			ctrlButton.Visible = true
+		end
+	end)
+
+	-- Fungsi untuk tombol Close
+	CloseButton.MouseButton1Click:Connect(function()
+		screenGui:Destroy()
+	end)
+end
+
+-- ====== CREATE DRONE TOGGLE BUTTON ======
+local function createDroneToggleButton()
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Parent = playerGui
+	screenGui.ResetOnSpawn = false
 
 	-- Tombol untuk mengaktifkan/mematikan drone
 	local button = Instance.new("TextButton")
 	button.Parent = screenGui
-	button.Size = UDim2.new(0, 40, 0, 40) -- ukuran kecil 65x35
-    button.Position = UDim2.new(1, -70, 0.12, 0)
+	button.Size = UDim2.new(0, 40, 0, 40)
+	button.Position = UDim2.new(1, -70, 0.12, 0)
 	button.Text = "DRN"
 	button.TextSize = 8
 	button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -245,9 +603,9 @@ local function createGui()
 	button.BackgroundTransparency = 0.3	
 	
 	-- Tambahkan round corner
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 6)
-corner.Parent = button
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 6)
+	corner.Parent = button
 
 	-- Menambahkan event handler untuk klik tombol
 	button.MouseButton1Click:Connect(function()
@@ -255,7 +613,6 @@ corner.Parent = button
 			disableDrone()
 			button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			button.BackgroundTransparency = 0.3
-			
 		else
 			enableDrone()
 			button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
@@ -264,12 +621,18 @@ corner.Parent = button
 	end)
 end
 
--- Panggil fungsi untuk membuat tombol GUI saat permainan dimulai
-createGui()
-
--- ====== INPUT GERAK ======
+-- ====== INPUT HANDLING ======
 UserInputService.InputBegan:Connect(function(input, gpe)
 	if gpe then return end
+	
+	if input.KeyCode == TOGGLE_KEY then
+		if droneEnabled then
+			disableDrone()
+		else
+			enableDrone()
+		end
+	end
+	
 	if not droneEnabled then return end
 
 	if input.KeyCode == KEY_FORWARD then
@@ -310,6 +673,15 @@ UserInputService.InputEnded:Connect(function(input)
 	if input.KeyCode == KEY_SLOW then speedMultSlow = 1 end
 end)
 
+-- ====== UPDATE LOOP ======
+RunService.RenderStepped:Connect(function()
+	updateDroneMovementFromVirtualKeys()
+end)
+
+-- ====== INITIALIZATION ======
+createVirtualKeyboard()
+createDroneToggleButton()
+
 -- Jika karakter respawn saat drone aktif, nonaktifkan biar state bersih
 player.CharacterAdded:Connect(function()
 	if droneEnabled then disableDrone() end
@@ -318,3 +690,5 @@ end)
 game:BindToClose(function()
 	if droneEnabled then disableDrone() end
 end)
+
+print("Virtual Keyboard dan Drone View loaded!")
