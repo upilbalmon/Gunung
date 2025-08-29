@@ -5,8 +5,8 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 -- Konfigurasi
-local MAX_SHIELD = 10000
-local RECHARGE_RATE = 100 -- regen per detik
+local MAX_SHIELD = 3000
+local RECHARGE_RATE = 10 -- regen per detik
 
 -- Status
 local ShieldHP = MAX_SHIELD
