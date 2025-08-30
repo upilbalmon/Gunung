@@ -72,14 +72,22 @@ local offset = 0
 -- Function to create the floor with offset
 local function createFloor()
     local player = game.Players.LocalPlayer
-    local hrp = player.Character.HumanoidRootPart
-    -- Adjust position based on the offset
-    local position = hrp.Position - Vector3.new(0, hrp.Size.Y/2, 0) + Vector3.new(0, offset, 0)
+    local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
     
+    if not hrp then
+        warn("HumanoidRootPart tidak ditemukan!")
+        return
+    end
+    
+    -- Hancurkan lantai sebelumnya jika ada
     if createdFloor then
         createdFloor:Destroy()
     end
     
+    -- Hitung posisi 5 stud di bawah karakter
+    local position = hrp.Position - Vector3.new(0, 5, 0)
+    
+    -- Buat part lantai
     createdFloor = Instance.new("Part")
     createdFloor.Size = Vector3.new(length, height, width)
     createdFloor.Position = position
@@ -88,6 +96,14 @@ local function createFloor()
     createdFloor.Transparency = 0.7
     createdFloor.Material = Enum.Material.SmoothPlastic
     createdFloor.Parent = workspace
+    
+    -- Set timer untuk menghancurkan lantai setelah 60 detik
+    task.delay(60, function()
+        if createdFloor and createdFloor.Parent then
+            createdFloor:Destroy()
+            createdFloor = nil
+        end
+    end)
 end
 
 -- Button function to create floor
