@@ -10,15 +10,15 @@ local DEFAULT_JUMPHEIGHT = 50.0
 local speedModes = {
     Slow = 8,
     Normal = 16,
-    2X  = 32,
-    3X = 46
+    Fast  = 32,
+    Super = 46
 }
 
 local jumpModes = {
     Normal = 50.0,
-    2X = 100.0,
-    8X = 400.0,
-    24X = 1200.0
+    Medium = 100.0,
+    High = 400.0,
+    Super = 1200.0
 }
 
 -- Create ScreenGui
