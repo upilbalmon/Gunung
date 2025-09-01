@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local createdFloor = nil  -- To store the created floor
+local floorHeightMode = "below"  -- "below" or "above"
 
 -- Hapus GUI lama bila ada
 local OLD = playerGui:FindFirstChild("FloorCreatorGUI")
@@ -17,7 +18,7 @@ MainFrame.Parent = playerGui
 MainFrame.ResetOnSpawn = false
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 80, 0, 140)
+Frame.Size = UDim2.new(0, 80, 0, 175)
 Frame.Position = UDim2.new(0.8, -45, 0.6, -25)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BackgroundTransparency = 0.9
@@ -62,12 +63,12 @@ end
 local UpButton = createButton(0, 30, "↑")
 local CreateButton = createButton(35, 40, "FLOOR")
 local DownButton = createButton(80, 30, "↓")
+local HeightButton = createButton(115, 30, "BELOW")
 
 -- Default values
 local length = 1000
 local width = 1000
 local height = 0.1
-local offset = 0
 
 -- Function to create the floor with offset
 local function createFloor()
@@ -84,8 +85,13 @@ local function createFloor()
         createdFloor:Destroy()
     end
     
-    -- Hitung posisi 5 stud di bawah karakter
-    local position = hrp.Position - Vector3.new(0, 5, 0)
+    -- Hitung posisi berdasarkan mode tinggi
+    local position
+    if floorHeightMode == "below" then
+        position = hrp.Position - Vector3.new(0, 3, 0)  -- 3 stud di bawah
+    else
+        position = hrp.Position + Vector3.new(0, 10, 0)  -- 10 stud di atas
+    end
     
     -- Buat part lantai
     createdFloor = Instance.new("Part")
@@ -109,6 +115,29 @@ end
 -- Button function to create floor
 CreateButton.MouseButton1Click:Connect(function()
     createFloor()
+end)
+
+-- Height toggle button functionality
+HeightButton.MouseButton1Click:Connect(function()
+    if floorHeightMode == "below" then
+        floorHeightMode = "above"
+        HeightButton.Text = "ABOVE"
+    else
+        floorHeightMode = "below"
+        HeightButton.Text = "BELOW"
+    end
+    
+    -- Update floor position if it exists
+    if createdFloor then
+        local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            if floorHeightMode == "below" then
+                createdFloor.Position = hrp.Position - Vector3.new(0, 3, 0)
+            else
+                createdFloor.Position = hrp.Position + Vector3.new(0, 10, 0)
+            end
+        end
+    end
 end)
 
 -- Variables for button states
@@ -167,3 +196,4 @@ end
 setupButtonHover(CreateButton)
 setupButtonHover(UpButton)
 setupButtonHover(DownButton)
+setupButtonHover(HeightButton)
