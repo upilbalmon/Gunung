@@ -10,15 +10,15 @@ local DEFAULT_JUMPHEIGHT = 50.0
 local speedModes = {
     Slow = 8,
     Normal = 16,
-    Double = 32,
-    Triple = 46
+    2X  = 32,
+    3X = 46
 }
 
 local jumpModes = {
     Normal = 50.0,
-    Double = 100.0,
-    Quadruple = 400.0,
-    Octuple = 1200.0
+    2X = 100.0,
+    8X = 400.0,
+    24X = 1200.0
 }
 
 -- Create ScreenGui
@@ -28,7 +28,7 @@ ScreenGui.Parent = Player.PlayerGui
 
 -- Main Frame - POSISI DI TENGAH SIMPLE
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 280, 0, 380)
+MainFrame.Size = UDim2.new(0, 280, 0, 320)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0) -- Posisi di tengah
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5) -- Anchor point di tengah
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
