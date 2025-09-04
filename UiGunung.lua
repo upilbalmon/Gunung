@@ -7,9 +7,7 @@ local player  = Players.LocalPlayer
 local pg      = player:WaitForChild("PlayerGui")
 
 local URLS = {
-    "https://raw.githubusercontent.com/upilbalmon/Gunung/refs/heads/main/dronespy.lua",
     "https://raw.githubusercontent.com/upilbalmon/Gunung/refs/heads/main/pengendalitanah.lua",
-    "https://raw.githubusercontent.com/upilbalmon/1/refs/heads/main/aimteleport.lua",
 }
 
 --== Make a dedicated ScreenGui (top layer, persist) ==
