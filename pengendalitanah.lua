@@ -45,6 +45,17 @@ local speedMultFast, speedMultSlow = 1, 1
 local createdFloor = nil
 local floorHeightMode = "below"
 
+-- State untuk Lampu
+local flashlight = nil
+
+-- State untuk Kecepatan
+local speedModes = {
+	{name = "Slow", speed = 8},
+	{name = "Normal", speed = 16},
+	{name = "Fast", speed = 32}
+}
+local currentSpeedModeIndex = 2 -- Dimulai dari "Normal" (indeks 2)
+
 local pos -- posisi drone
 local vel = Vector3.zero
 local saved = {}
@@ -139,6 +150,46 @@ local function createFloor()
             createdFloor = nil
         end
     end)
+end
+
+-- ====== FUNGSI LAMPU PENERANGAN ======
+local function toggleFlashlight()
+	if flashlight then
+		flashlight:Destroy()
+		flashlight = nil
+	else
+		local part = Instance.new("Part")
+		part.Name = "Flashlight"
+		part.Anchored = true
+		part.CanCollide = false
+		part.Size = Vector3.new(0.5, 0.5, 0.5)
+		part.Transparency = 1
+		part.Parent = workspace
+
+		local light = Instance.new("SpotLight", part)
+		light.Brightness = 5
+		light.Color = Color3.new(1, 1, 1)
+		light.Face = Enum.NormalId.Front
+		light.Angle = 45
+		light.Range = 60
+
+		local runConn
+		runConn = RunService.RenderStepped:Connect(function()
+			local char = character()
+			local head = char and char:FindFirstChild("Head")
+			if not head then
+				if flashlight then flashlight:Destroy() end
+				runConn:Disconnect()
+				return
+			end
+			
+			-- Sesuaikan posisi lampu agar berada di depan wajah karakter
+			local offset = camera.CFrame.LookVector * 1.5
+			part.CFrame = camera.CFrame * CFrame.new(offset)
+		end)
+
+		flashlight = part
+	end
 end
 
 -- ====== HINT GUI SINGKAT ======
@@ -386,13 +437,45 @@ local function createDroneMovementGUI()
 	})
 end
 
--- ====== CREATE DRONE TOGGLE BUTTON ======
+-- ====== CREATE DRONE TOGGLE BUTTONS ======
 local function createDroneToggleButton()
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Parent = playerGui
 	screenGui.Name = "DroneToggleButtonGUI"
 	screenGui.ResetOnSpawn = false
 	screenGui.Enabled = true
+
+	local speedButton = Instance.new("TextButton")
+	speedButton.Parent = screenGui
+	speedButton.Name = "Speed_Button"
+	speedButton.Size = UDim2.new(0, 40, 0, 40)
+	speedButton.Position = UDim2.new(1, -70, 0.12, -45) -- Posisikan di atas tombol DRN
+	speedButton.AnchorPoint = Vector2.new(0.5, 0)
+	speedButton.Text = "Speed: Normal"
+	speedButton.TextSize = 8
+	speedButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	speedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	speedButton.BackgroundTransparency = 0.3	
+	local speedCorner = Instance.new("UICorner")
+	speedCorner.CornerRadius = UDim.new(0, 6)
+	speedCorner.Parent = speedButton
+
+	speedButton.MouseButton1Click:Connect(function()
+		currentSpeedModeIndex = currentSpeedModeIndex + 1
+		if currentSpeedModeIndex > #speedModes then
+			currentSpeedModeIndex = 1
+		end
+		
+		local newMode = speedModes[currentSpeedModeIndex]
+		local char = player.Character
+		if char then
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
+			if humanoid then
+				humanoid.WalkSpeed = newMode.speed
+			end
+		end
+		speedButton.Text = "Speed: " .. newMode.name
+	end)
 
 	local button = Instance.new("TextButton")
 	button.Parent = screenGui
@@ -417,6 +500,25 @@ local function createDroneToggleButton()
 			enableDrone()
 			button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 		end
+	end)
+
+	local lampButton = Instance.new("TextButton")
+	lampButton.Parent = screenGui
+	lampButton.Name = "Lamp_Button"
+	lampButton.Size = UDim2.new(0, 40, 0, 40)
+	lampButton.Position = UDim2.new(1, -70, 0.12, 45) -- Posisikan di bawah tombol DRN
+	lampButton.AnchorPoint = Vector2.new(0.5, 0)
+	lampButton.Text = "Lampu"
+	lampButton.TextSize = 8
+	lampButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	lampButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	lampButton.BackgroundTransparency = 0.3	
+	local lampCorner = Instance.new("UICorner")
+	lampCorner.CornerRadius = UDim.new(0, 6)
+	lampCorner.Parent = lampButton
+
+	lampButton.MouseButton1Click:Connect(function()
+		toggleFlashlight()
 	end)
 end
 
