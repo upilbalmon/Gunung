@@ -56,6 +56,16 @@ local speedModes = {
 }
 local currentSpeedModeIndex = 2 -- Dimulai dari "Normal" (indeks 2)
 
+-- State untuk Gravitasi Bulan
+local isMoonGravity = false
+local NORMAL_GRAVITY = workspace.Gravity
+local MOON_GRAVITY = 6.2
+
+-- State untuk Infinite Jump
+local isInfiniteJump = false
+local jumpConnection = nil
+local jumpDebounce = false
+
 local pos -- posisi drone
 local vel = Vector3.zero
 local saved = {}
@@ -444,12 +454,57 @@ local function createDroneToggleButton()
 	screenGui.Name = "DroneToggleButtonGUI"
 	screenGui.ResetOnSpawn = false
 	screenGui.Enabled = true
+	
+	-- Tombol baru untuk Infinite Jump
+	local jumpButton = Instance.new("TextButton")
+	jumpButton.Parent = screenGui
+	jumpButton.Name = "Infinite_Jump_Button"
+	jumpButton.Size = UDim2.new(0, 40, 0, 40)
+	jumpButton.Position = UDim2.new(1, -70, 0.12, -90) -- Posisi di atas tombol Speed
+	jumpButton.AnchorPoint = Vector2.new(0.5, 0)
+	jumpButton.Text = "Jump: Normal"
+	jumpButton.TextSize = 8
+	jumpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	jumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	jumpButton.BackgroundTransparency = 0.3
+	local jumpCorner = Instance.new("UICorner")
+	jumpCorner.CornerRadius = UDim.new(0, 6)
+	jumpCorner.Parent = jumpButton
+	
+	jumpButton.MouseButton1Click:Connect(function()
+		isInfiniteJump = not isInfiniteJump
+		
+		if isInfiniteJump then
+			jumpButton.Text = "Jump: Infinite"
+			-- Menghubungkan ke UserInputService
+			jumpConnection = UserInputService.JumpRequest:Connect(function()
+				local char = player.Character
+				local hum = char and char:FindFirstChildOfClass("Humanoid")
+				
+				if hum and not jumpDebounce then
+					jumpDebounce = true
+					hum:ChangeState(Enum.HumanoidStateType.Jumping)
+					-- Memberikan sedikit jeda untuk mencegah spam
+					task.delay(0.1, function()
+						jumpDebounce = false
+					end)
+				end
+			end)
+		else
+			jumpButton.Text = "Jump: Normal"
+			-- Memutuskan koneksi UserInputService
+			if jumpConnection then
+				jumpConnection:Disconnect()
+				jumpConnection = nil
+			end
+		end
+	end)
 
 	local speedButton = Instance.new("TextButton")
 	speedButton.Parent = screenGui
 	speedButton.Name = "Speed_Button"
 	speedButton.Size = UDim2.new(0, 40, 0, 40)
-	speedButton.Position = UDim2.new(1, -70, 0.12, -45) -- Posisikan di atas tombol DRN
+	speedButton.Position = UDim2.new(1, -70, 0.12, -45) -- Posisikan di bawah tombol Infinite Jump
 	speedButton.AnchorPoint = Vector2.new(0.5, 0)
 	speedButton.Text = "Speed: Normal"
 	speedButton.TextSize = 8
@@ -519,6 +574,34 @@ local function createDroneToggleButton()
 
 	lampButton.MouseButton1Click:Connect(function()
 		toggleFlashlight()
+	end)
+	
+	-- Tambahkan tombol gravitasi bulan
+	local gravityButton = Instance.new("TextButton")
+	gravityButton.Parent = screenGui
+	gravityButton.Name = "Gravity_Button"
+	gravityButton.Size = UDim2.new(0, 40, 0, 40)
+	gravityButton.Position = UDim2.new(1, -70, 0.12, 90) -- Posisikan di bawah tombol Lampu
+	gravityButton.AnchorPoint = Vector2.new(0.5, 0)
+	gravityButton.Text = "Gravity: Normal"
+	gravityButton.TextSize = 8
+	gravityButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	gravityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	gravityButton.BackgroundTransparency = 0.3
+	local gravityCorner = Instance.new("UICorner")
+	gravityCorner.CornerRadius = UDim.new(0, 6)
+	gravityCorner.Parent = gravityButton
+
+	gravityButton.MouseButton1Click:Connect(function()
+		if isMoonGravity then
+			workspace.Gravity = NORMAL_GRAVITY
+			isMoonGravity = false
+			gravityButton.Text = "Gravity: Normal"
+		else
+			workspace.Gravity = MOON_GRAVITY
+			isMoonGravity = true
+			gravityButton.Text = "Gravity: Moon"
+		end
 	end)
 end
 
