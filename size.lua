@@ -1,54 +1,56 @@
-local button = script.Parent
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local isScaled = false
+-- LocalScript, tempatkan di dalam tombol (Button) atau di dalam ScreenGui
 
-local originalScale = character.Humanoid.HeadScale.Value
-local originalBodyScale = character.Humanoid.BodyDepthScale.Value
-local originalHeightScale = character.Humanoid.BodyHeightScale.Value
-local originalWidthScale = character.Humanoid.BodyWidthScale.Value
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local scaledFactor = 2 -- Mengubah ukuran karakter menjadi 2x lipat
+-- Variabel UI
+local carryButton = script.Parent -- Tombol Carry
+local playerDropdown = carryButton.Parent:WaitForChild("PlayerDropdown") -- Ganti dengan nama Dropdown Anda
 
-button.MouseButton1Click:Connect(function()
-	-- Pastikan karakter ada sebelum mencoba mengubahnya
-	if not character or not character.Parent then
-		character = player.Character or player.CharacterAdded:Wait()
-		if not character or not character.Parent then return end -- Keluar jika karakter masih tidak ada
+-- Event
+local requestCarry = ReplicatedStorage:WaitForChild("CarryEvents"):WaitForChild("RequestCarry")
+
+-- Fungsi untuk memperbarui daftar pemain di Dropdown
+local function updatePlayerList()
+	-- Hapus semua opsi yang ada terlebih dahulu
+	playerDropdown:ClearAllChildren()
+	
+	-- Tambahkan opsi untuk setiap pemain yang ada di game
+	for _, player in ipairs(Players:GetPlayers()) do
+		local newOption = Instance.new("StringValue")
+		newOption.Name = "Option"
+		newOption.Value = player.Name
+		newOption.Parent = playerDropdown
 	end
+end
 
-	-- Cek apakah properti HeadScale, BodyDepthScale, dll., ada
-	if not character:FindFirstChild("Humanoid") then return end
-	local humanoid = character.Humanoid
-	if not humanoid:FindFirstChild("HeadScale") or not humanoid:FindFirstChild("BodyDepthScale") then return end
-
-	if not isScaled then
-		-- Memperbesar karakter
-		humanoid.HeadScale.Value = originalScale * scaledFactor
-		humanoid.oidBodyDepthScale.Value = originalBodyScale * scaledFactor
-		humanoid.BodyHeightScale.Value = originalHeightScale * scaledFactor
-		humanoid.BodyWidthScale.Value = originalWidthScale * scaledFactor
-		button.Text = "Kembali ke Normal"
-		isScaled = true
+-- Fungsi saat tombol ditekan
+local function onCarryClicked()
+	local selectedPlayerName = playerDropdown.Value -- Ambil nama pemain yang dipilih dari Dropdown
+	
+	-- Cek apakah ada pemain yang dipilih
+	if selectedPlayerName == "" then
+		warn("Pilih pemain dari daftar!")
+		return
+	end
+	
+	local targetPlayer = Players:FindFirstChild(selectedPlayerName)
+	
+	if targetPlayer then
+		requestCarry:FireServer(targetPlayer)
+		print("Remote event dikirim untuk membawa " .. selectedPlayerName)
 	else
-		-- Mengembalikan karakter ke ukuran normal
-		humanoid.HeadScale.Value = originalScale
-		humanoid.BodyDepthScale.Value = originalBodyScale
-		humanoid.BodyHeightScale.Value = originalHeightScale
-		humanoid.BodyWidthScale.Value = originalWidthScale
-		button.Text = "Perbesar Karakter"
-		isScaled = false
+		warn("Player " .. selectedPlayerName .. " tidak ditemukan!")
 	end
-end)
+end
 
--- Jika karakter di-reset, skrip akan kembali ke ukuran normal
-player.CharacterAdded:Connect(function(newCharacter)
-	character = newCharacter
-	-- Mengatur ulang properti agar tetap berfungsi setelah karakter di-reset
-	originalScale = character.Humanoid.HeadScale.Value
-	originalBodyScale = character.Humanoid.BodyDepthScale.Value
-	originalHeightScale = character.Humanoid.BodyHeightScale.Value
-	originalWidthScale = character.Humanoid.BodyWidthScale.Value
-	isScaled = false
-	button.Text = "Perbesar Karakter"
-end)
+-- Hubungkan fungsi ke event tombol
+carryButton.Activated:Connect(onCarryClicked)
+
+-- Perbarui daftar pemain saat skrip dimulai
+updatePlayerList()
+
+-- Hubungkan ke event PlayerAdded dan PlayerRemoving untuk memperbarui daftar secara dinamis
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
