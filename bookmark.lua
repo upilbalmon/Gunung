@@ -27,8 +27,8 @@ screenGui.Parent = playerGui
 -- Container utama (Card) - Ukuran dikurangi 2:3
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.fromOffset(280, 480) -- Diperbesar untuk fitur waypoint dan teleport manual
-mainFrame.Position = UDim2.new(0, 13, 0.5, -240)
+mainFrame.Size = UDim2.fromOffset(280, 380) -- Diperbesar untuk fitur waypoint dan teleport manual
+mainFrame.Position = UDim2.new(0.5, -140, 0.5, -190)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BackgroundTransparency = 0.4
 mainFrame.BorderSizePixel = 0
@@ -72,7 +72,7 @@ minimizeBtn.Name = "MinimizeBtn"
 minimizeBtn.Size = UDim2.fromOffset(16, 16)
 minimizeBtn.Position = UDim2.new(1, -36, 0, 0)
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-minimizeBtn.TextColor3 = Color3.new(0, 0, 0)
+minimizeBtn.TextColor3 = Color3.new(250, 250, 250)
 minimizeBtn.Text = "-"
 minimizeBtn.Font = Enum.Font.GothamBold
 minimizeBtn.TextSize = 12
@@ -116,38 +116,38 @@ local startPosMinimized
 
 -- Fungsi untuk mengupdate posisi tombol minimized saat didrag
 local function updateMinimizedBtnPosition(input)
-    if not isDraggingMinimized then return end
-    
-    local delta = input.Position - dragStartMinimized
-    local newX = math.clamp(startPosMinimized.X.Offset + delta.X, 0, screenGui.AbsoluteSize.X - minimizedBtn.AbsoluteSize.X)
-    local newY = math.clamp(startPosMinimized.Y.Offset + delta.Y, 0, screenGui.AbsoluteSize.Y - minimizedBtn.AbsoluteSize.Y)
-    
-    minimizedBtn.Position = UDim2.new(0, newX, 0, newY)
+	if not isDraggingMinimized then return end
+
+	local delta = input.Position - dragStartMinimized
+	local newX = math.clamp(startPosMinimized.X.Offset + delta.X, 0, screenGui.AbsoluteSize.X - minimizedBtn.AbsoluteSize.X)
+	local newY = math.clamp(startPosMinimized.Y.Offset + delta.Y, 0, screenGui.AbsoluteSize.Y - minimizedBtn.AbsoluteSize.Y)
+
+	minimizedBtn.Position = UDim2.new(0, newX, 0, newY)
 end
 
 -- Event handlers untuk drag functionality
 minimizedBtn.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isDraggingMinimized = true
-        dragStartMinimized = input.Position
-        startPosMinimized = minimizedBtn.Position
-        minimizedBtn.AutoButtonColor = false
-        minimizedBtn.BackgroundColor3 = Color3.fromRGB(80, 140, 255)
-    end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		isDraggingMinimized = true
+		dragStartMinimized = input.Position
+		startPosMinimized = minimizedBtn.Position
+		minimizedBtn.AutoButtonColor = false
+		minimizedBtn.BackgroundColor3 = Color3.fromRGB(80, 140, 255)
+	end
 end)
 
 minimizedBtn.InputChanged:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and isDraggingMinimized then
-        updateMinimizedBtnPosition(input)
-    end
+	if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and isDraggingMinimized then
+		updateMinimizedBtnPosition(input)
+	end
 end)
 
 minimizedBtn.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        isDraggingMinimized = false
-        minimizedBtn.AutoButtonColor = true
-        minimizedBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-    end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		isDraggingMinimized = false
+		minimizedBtn.AutoButtonColor = true
+		minimizedBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+	end
 end)
 
 -- Tab Container
@@ -160,19 +160,19 @@ tabContainer.Parent = mainFrame
 
 -- Fungsi helper untuk membuat tab
 local function createTab(name, text, position, size)
-    local tab = Instance.new("TextButton")
-    tab.Name = "Tab" .. name
-    tab.Size = size
-    tab.Position = position
-    tab.BackgroundColor3 = name == "Bookmark" and Color3.fromRGB(60, 120, 255) or Color3.fromRGB(40, 40, 40)
-    tab.Text = text
-    tab.TextColor3 = name == "Bookmark" and Color3.new(1, 1, 1) or Color3.fromRGB(180, 180, 180)
-    tab.Font = Enum.Font.GothamBold
-    tab.TextSize = 10
-    tab.AutoButtonColor = false
-    tab.Parent = tabContainer
-    Instance.new("UICorner", tab).CornerRadius = UDim.new(0, 4)
-    return tab
+	local tab = Instance.new("TextButton")
+	tab.Name = "Tab" .. name
+	tab.Size = size
+	tab.Position = position
+	tab.BackgroundColor3 = name == "Bookmark" and Color3.fromRGB(60, 120, 255) or Color3.fromRGB(40, 40, 40)
+	tab.Text = text
+	tab.TextColor3 = name == "Bookmark" and Color3.new(1, 1, 1) or Color3.fromRGB(180, 180, 180)
+	tab.Font = Enum.Font.GothamBold
+	tab.TextSize = 10
+	tab.AutoButtonColor = false
+	tab.Parent = tabContainer
+	Instance.new("UICorner", tab).CornerRadius = UDim.new(0, 4)
+	return tab
 end
 
 -- Tab Bookmark
@@ -218,10 +218,10 @@ listPadding.PaddingBottom = UDim.new(0, 5)
 
 -- Auto-resize CanvasSize sesuai konten
 local function updateCanvasSize()
-    task.defer(function()
-        local contentSize = uiList.AbsoluteContentSize
-        bookmarkTab.CanvasSize = UDim2.new(0, 0, 0, contentSize.Y + 10)
-    end)
+	task.defer(function()
+		local contentSize = uiList.AbsoluteContentSize
+		bookmarkTab.CanvasSize = UDim2.new(0, 0, 0, contentSize.Y + 10)
+	end)
 end
 uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
 
@@ -290,9 +290,9 @@ saverTab.Parent = tabContent
 
 -- Fungsi helper untuk kasih rounded corner
 local function applyCorner(guiObject, radius)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, radius or 6)
-    corner.Parent = guiObject
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, radius or 6)
+	corner.Parent = guiObject
 end
 
 -- TextBox
@@ -309,8 +309,8 @@ applyCorner(saverTextBox, 6)
 
 -- ==== Tombol biru ====
 local function styleBlueButton(btn)
-    btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 end
 
 -- Save Button (kiri)
@@ -519,124 +519,124 @@ local currentLoop = 1
 
 -- Fungsi untuk menjalankan waypoint
 local function runWaypoint()
-    if not isWaypointRunning or not next(bookmarks) then return end
-    
-    -- Dapatkan daftar nama bookmark yang terurut
-    local names = {}
-    for name in pairs(bookmarks) do
-        table.insert(names, name)
-    end
-    table.sort(names, function(a, b) return a:lower() < b:lower() end)
-    
-    -- Jika sudah mencapai akhir daftar, reset atau hentikan
-    if currentWaypointIndex > #names then
-        currentWaypointIndex = 1
-        currentLoop = currentLoop + 1
-        
-        -- Cek jika sudah mencapai jumlah loop yang diinginkan
-        local maxLoops = tonumber(loopBox.Text) or 1
-        if currentLoop > maxLoops then
-            isWaypointRunning = false
-            waypointButton.Text = "▶ Start Waypoint"
-            waypointButton.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
-            saverStatusLabel.Text = "✅ Waypoint selesai"
-            return
-        end
-    end
-    
-    -- Teleport ke waypoint saat ini
-    local currentName = names[currentWaypointIndex]
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    
-    if hrp and bookmarks[currentName] then
-        hrp.CFrame = CFrame.new(bookmarks[currentName])
-        saverStatusLabel.Text = string.format("🔁 Waypoint %d/%d (Loop %d/%d): %s", 
-            currentWaypointIndex, #names, currentLoop, tonumber(loopBox.Text) or 1, currentName)
-    end
-    
-    -- Increment index untuk waypoint berikutnya
-    currentWaypointIndex = currentWaypointIndex + 1
-    
-    -- Jadwalkan waypoint berikutnya
-    local delay = tonumber(delayBox.Text) or 3
-    delay = math.max(1, delay) -- Minimal 1 detik
-    task.delay(delay, runWaypoint)
+	if not isWaypointRunning or not next(bookmarks) then return end
+
+	-- Dapatkan daftar nama bookmark yang terurut
+	local names = {}
+	for name in pairs(bookmarks) do
+		table.insert(names, name)
+	end
+	table.sort(names, function(a, b) return a:lower() < b:lower() end)
+
+	-- Jika sudah mencapai akhir daftar, reset atau hentikan
+	if currentWaypointIndex > #names then
+		currentWaypointIndex = 1
+		currentLoop = currentLoop + 1
+
+		-- Cek jika sudah mencapai jumlah loop yang diinginkan
+		local maxLoops = tonumber(loopBox.Text) or 1
+		if currentLoop > maxLoops then
+			isWaypointRunning = false
+			waypointButton.Text = "▶ Start Waypoint"
+			waypointButton.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
+			saverStatusLabel.Text = "✅ Waypoint selesai"
+			return
+		end
+	end
+
+	-- Teleport ke waypoint saat ini
+	local currentName = names[currentWaypointIndex]
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+
+	if hrp and bookmarks[currentName] then
+		hrp.CFrame = CFrame.new(bookmarks[currentName])
+		saverStatusLabel.Text = string.format("🔁 Waypoint %d/%d (Loop %d/%d): %s", 
+			currentWaypointIndex, #names, currentLoop, tonumber(loopBox.Text) or 1, currentName)
+	end
+
+	-- Increment index untuk waypoint berikutnya
+	currentWaypointIndex = currentWaypointIndex + 1
+
+	-- Jadwalkan waypoint berikutnya
+	local delay = tonumber(delayBox.Text) or 3
+	delay = math.max(1, delay) -- Minimal 1 detik
+	task.delay(delay, runWaypoint)
 end
 
 -- Event handler untuk tombol waypoint
 waypointButton.MouseButton1Click:Connect(function()
-    if not next(bookmarks) then
-        saverStatusLabel.Text = "⚠️ Tidak ada bookmark untuk waypoint"
-        return
-    end
-    
-    isWaypointRunning = not isWaypointRunning
-    
-    if isWaypointRunning then
-        -- Start waypoint
-        waypointButton.Text = "⏹ Stop Waypoint"
-        waypointButton.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
-        currentWaypointIndex = 1
-        currentLoop = 1
-        saverStatusLabel.Text = "🔄 Memulai waypoint..."
-        runWaypoint()
-    else
-        -- Stop waypoint
-        waypointButton.Text = "▶ Start Waypoint"
-        waypointButton.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
-        saverStatusLabel.Text = "⏹ Waypoint dihentikan"
-    end
+	if not next(bookmarks) then
+		saverStatusLabel.Text = "⚠️ Tidak ada bookmark untuk waypoint"
+		return
+	end
+
+	isWaypointRunning = not isWaypointRunning
+
+	if isWaypointRunning then
+		-- Start waypoint
+		waypointButton.Text = "⏹ Stop Waypoint"
+		waypointButton.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+		currentWaypointIndex = 1
+		currentLoop = 1
+		saverStatusLabel.Text = "🔄 Memulai waypoint..."
+		runWaypoint()
+	else
+		-- Stop waypoint
+		waypointButton.Text = "▶ Start Waypoint"
+		waypointButton.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
+		saverStatusLabel.Text = "⏹ Waypoint dihentikan"
+	end
 end)
 
 -- Event handler untuk tombol teleport manual
 manualTpBtn.MouseButton1Click:Connect(function()
-    local coordsStr = coordsBox.Text
-    local coords = {}
-    -- Tangkap angka (integer atau float, positif atau negatif)
-    for numStr in coordsStr:gmatch("([%-%.%d]+)") do
-        table.insert(coords, tonumber(numStr))
-    end
-    
-    if #coords < 3 then
-        saverStatusLabel.Text = "❌ Masukkan 3 koordinat yang valid (X Y Z)."
-        return
-    end
+	local coordsStr = coordsBox.Text
+	local coords = {}
+	-- Tangkap angka (integer atau float, positif atau negatif)
+	for numStr in coordsStr:gmatch("([%-%.%d]+)") do
+		table.insert(coords, tonumber(numStr))
+	end
 
-    local x, y, z = coords[1], coords[2], coords[3]
+	if #coords < 3 then
+		saverStatusLabel.Text = "❌ Masukkan 3 koordinat yang valid (X Y Z)."
+		return
+	end
 
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    
-    if hrp then
-        hrp.CFrame = CFrame.new(x, y, z)
-        saverStatusLabel.Text = "✅ Berhasil teleport ke koordinat."
-    else
-        saverStatusLabel.Text = "❌ Gagal teleport: HRP tidak ditemukan."
-    end
+	local x, y, z = coords[1], coords[2], coords[3]
+
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+
+	if hrp then
+		hrp.CFrame = CFrame.new(x, y, z)
+		saverStatusLabel.Text = "✅ Berhasil teleport ke koordinat."
+	else
+		saverStatusLabel.Text = "❌ Gagal teleport: HRP tidak ditemukan."
+	end
 end)
 
 -- ==== Util ====
 local function setStatus(text, isError)
-    statusLbl.Text = text or ""
-    if isError then
-        statusLbl.TextColor3 = Color3.fromRGB(255, 120, 120)
-    else
-        statusLbl.TextColor3 = Color3.fromRGB(180, 220, 160)
-    end
+	statusLbl.Text = text or ""
+	if isError then
+		statusLbl.TextColor3 = Color3.fromRGB(255, 120, 120)
+	else
+		statusLbl.TextColor3 = Color3.fromRGB(180, 220, 160)
+	end
 end
 
 -- Fungsi untuk minimize/maximize GUI
 local function toggleMinimize()
-    if mainFrame.Visible then
-        -- Minimize
-        mainFrame.Visible = false
-        minimizedBtn.Visible = true
-    else
-        -- Maximize
-        mainFrame.Visible = true
-        minimizedBtn.Visible = false
-    end
+	if mainFrame.Visible then
+		-- Minimize
+		mainFrame.Visible = false
+		minimizedBtn.Visible = true
+	else
+		-- Maximize
+		mainFrame.Visible = true
+		minimizedBtn.Visible = false
+	end
 end
 
 -- Event handlers untuk tombol minimize dan close
@@ -644,144 +644,144 @@ minimizeBtn.MouseButton1Click:Connect(toggleMinimize)
 minimizedBtn.MouseButton1Click:Connect(toggleMinimize)
 
 closeBtn.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
+	screenGui:Destroy()
 end)
 
 -- Fungsi untuk mengganti tab
 local function switchTab(selectedTab)
-    -- Reset semua tab
-    tabBookmark.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabBookmark.TextColor3 = Color3.fromRGB(180, 180, 180)
-    tabImport.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabImport.TextColor3 = Color3.fromRGB(180, 180, 180)
-    tabSaver.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    tabSaver.TextColor3 = Color3.fromRGB(180, 180, 180)
-    
-    -- Sembunyikan semua konten tab
-    bookmarkTab.Visible = false
-    importTab.Visible = false
-    saverTab.Visible = false
-    
-    -- Aktifkan tab yang dipilih
-    if selectedTab == "bookmark" then
-        tabBookmark.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-        tabBookmark.TextColor3 = Color3.new(1, 1, 1)
-        bookmarkTab.Visible = true
-    elseif selectedTab == "import" then
-        tabImport.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-        tabImport.TextColor3 = Color3.new(1, 1, 1)
-        importTab.Visible = true
-    elseif selectedTab == "saver" then
-        tabSaver.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-        tabSaver.TextColor3 = Color3.new(1, 1, 1)
-        saverTab.Visible = true
-    end
+	-- Reset semua tab
+	tabBookmark.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	tabBookmark.TextColor3 = Color3.fromRGB(180, 180, 180)
+	tabImport.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	tabImport.TextColor3 = Color3.fromRGB(180, 180, 180)
+	tabSaver.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	tabSaver.TextColor3 = Color3.fromRGB(180, 180, 180)
+
+	-- Sembunyikan semua konten tab
+	bookmarkTab.Visible = false
+	importTab.Visible = false
+	saverTab.Visible = false
+
+	-- Aktifkan tab yang dipilih
+	if selectedTab == "bookmark" then
+		tabBookmark.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+		tabBookmark.TextColor3 = Color3.new(1, 1, 1)
+		bookmarkTab.Visible = true
+	elseif selectedTab == "import" then
+		tabImport.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+		tabImport.TextColor3 = Color3.new(1, 1, 1)
+		importTab.Visible = true
+	elseif selectedTab == "saver" then
+		tabSaver.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+		tabSaver.TextColor3 = Color3.new(1, 1, 1)
+		saverTab.Visible = true
+	end
 end
 
 -- Event handlers untuk tab
 tabBookmark.MouseButton1Click:Connect(function()
-    switchTab("bookmark")
+	switchTab("bookmark")
 end)
 
 tabImport.MouseButton1Click:Connect(function()
-    switchTab("import")
+	switchTab("import")
 end)
 
 tabSaver.MouseButton1Click:Connect(function()
-    switchTab("saver")
+	switchTab("saver")
 end)
 
 -- Buat satu item baris di list (HANYA NAMA, TOMBOL X KECIL)
 local function makeListItem(name, v3)
-    local item = Instance.new("Frame")
-    item.Name = "Item_" .. name
-    item.Size = UDim2.new(1, -10, 0, 32)
-    item.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    item.BorderSizePixel = 0
-    item.Parent = bookmarkTab
-    Instance.new("UICorner", item).CornerRadius = UDim.new(0, 5)
+	local item = Instance.new("Frame")
+	item.Name = "Item_" .. name
+	item.Size = UDim2.new(1, -10, 0, 32)
+	item.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	item.BorderSizePixel = 0
+	item.Parent = bookmarkTab
+	Instance.new("UICorner", item).CornerRadius = UDim.new(0, 5)
 
-    local nameLbl = Instance.new("TextLabel")
-    nameLbl.Name = "NameLabel"
-    nameLbl.Size = UDim2.new(1, -60, 1, -0)
-    nameLbl.Position = UDim2.fromOffset(8, 0)
-    nameLbl.BackgroundTransparency = 1
-    nameLbl.TextXAlignment = Enum.TextXAlignment.Left
-    nameLbl.Text = name
-    nameLbl.TextColor3 = Color3.fromRGB(235, 235, 235)
-    nameLbl.Font = Enum.Font.Gotham
-    nameLbl.TextSize = 11
-    nameLbl.Parent = item
+	local nameLbl = Instance.new("TextLabel")
+	nameLbl.Name = "NameLabel"
+	nameLbl.Size = UDim2.new(1, -60, 1, -0)
+	nameLbl.Position = UDim2.fromOffset(8, 0)
+	nameLbl.BackgroundTransparency = 1
+	nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+	nameLbl.Text = name
+	nameLbl.TextColor3 = Color3.fromRGB(235, 235, 235)
+	nameLbl.Font = Enum.Font.Gotham
+	nameLbl.TextSize = 11
+	nameLbl.Parent = item
 
-    local tpBtn = Instance.new("TextButton")
-    tpBtn.Name = "TpBtn"
-    tpBtn.Size = UDim2.fromOffset(60, 24)
-    tpBtn.Position = UDim2.new(1, -75, 0.5, -12)
-    tpBtn.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
-    tpBtn.Text = "Teleport"
-    tpBtn.TextColor3 = Color3.new(1,1,1)
-    tpBtn.Font = Enum.Font.GothamBold
-    tpBtn.TextSize = 10
-    tpBtn.AutoButtonColor = true
-    tpBtn.Parent = item
-    Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 5)
+	local tpBtn = Instance.new("TextButton")
+	tpBtn.Name = "TpBtn"
+	tpBtn.Size = UDim2.fromOffset(60, 24)
+	tpBtn.Position = UDim2.new(1, -75, 0.5, -12)
+	tpBtn.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
+	tpBtn.Text = "Teleport"
+	tpBtn.TextColor3 = Color3.new(1,1,1)
+	tpBtn.Font = Enum.Font.GothamBold
+	tpBtn.TextSize = 10
+	tpBtn.AutoButtonColor = true
+	tpBtn.Parent = item
+	Instance.new("UICorner", tpBtn).CornerRadius = UDim.new(0, 5)
 
-    -- Tombol Hapus (X kecil persegi)
-    local delBtn = Instance.new("TextButton")
-    delBtn.Name = "DelBtn"
-    delBtn.Size = UDim2.fromOffset(24, 24)
-    delBtn.Position = UDim2.new(1, -30, 0.5, -12)
-    delBtn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
-    delBtn.Text = "X"
-    delBtn.TextColor3 = Color3.new(1,1,1)
-    delBtn.Font = Enum.Font.GothamBold
-    delBtn.TextSize = 12
-    delBtn.AutoButtonColor = true
-    delBtn.Parent = item
-    Instance.new("UICorner", delBtn).CornerRadius = UDim.new(0, 5)
+	-- Tombol Hapus (X kecil persegi)
+	local delBtn = Instance.new("TextButton")
+	delBtn.Name = "DelBtn"
+	delBtn.Size = UDim2.fromOffset(24, 24)
+	delBtn.Position = UDim2.new(1, -30, 0.5, -12)
+	delBtn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+	delBtn.Text = "X"
+	delBtn.TextColor3 = Color3.new(1,1,1)
+	delBtn.Font = Enum.Font.GothamBold
+	delBtn.TextSize = 12
+	delBtn.AutoButtonColor = true
+	delBtn.Parent = item
+	Instance.new("UICorner", delBtn).CornerRadius = UDim.new(0, 5)
 
-    -- Actions
-    tpBtn.MouseButton1Click:Connect(function()
-        local char = player.Character or player.CharacterAdded:Wait()
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            hrp.CFrame = CFrame.new(v3)
-            setStatus("Teleport ke " .. name .. " ✓", false)
-        else
-            setStatus("Gagal teleport: HRP tidak ditemukan.", true)
-        end
-    end)
+	-- Actions
+	tpBtn.MouseButton1Click:Connect(function()
+		local char = player.Character or player.CharacterAdded:Wait()
+		local hrp = char:FindFirstChild("HumanoidRootPart")
+		if hrp then
+			hrp.CFrame = CFrame.new(v3)
+			setStatus("Teleport ke " .. name .. " ✓", false)
+		else
+			setStatus("Gagal teleport: HRP tidak ditemukan.", true)
+		end
+	end)
 
-    delBtn.MouseButton1Click:Connect(function()
-        bookmarks[name] = nil
-        item:Destroy()
-        updateCanvasSize()
-        setStatus("Hapus bookmark: " .. name, false)
-    end)
+	delBtn.MouseButton1Click:Connect(function()
+		bookmarks[name] = nil
+		item:Destroy()
+		updateCanvasSize()
+		setStatus("Hapus bookmark: " .. name, false)
+	end)
 
-    return item
+	return item
 end
 
 -- Render ulang list (dipakai saat import)
 local function renderList()
-    -- Hapus semua item lama
-    for _, child in ipairs(bookmarkTab:GetChildren()) do
-        if child:IsA("Frame") and child.Name:match("^Item_") then
-            child:Destroy()
-        end
-    end
-    -- Urutkan nama
-    local names = {}
-    for name in pairs(bookmarks) do
-        table.insert(names, name)
-    end
-    table.sort(names, function(a, b) return a:lower() < b:lower() end)
+	-- Hapus semua item lama
+	for _, child in ipairs(bookmarkTab:GetChildren()) do
+		if child:IsA("Frame") and child.Name:match("^Item_") then
+			child:Destroy()
+		end
+	end
+	-- Urutkan nama
+	local names = {}
+	for name in pairs(bookmarks) do
+		table.insert(names, name)
+	end
+	table.sort(names, function(a, b) return a:lower() < b:lower() end)
 
-    for _, name in ipairs(names) do
-        makeListItem(name, bookmarks[name])
-    end
+	for _, name in ipairs(names) do
+		makeListItem(name, bookmarks[name])
+	end
 
-    updateCanvasSize()
+	updateCanvasSize()
 end
 
 -- ==== Parser Import ====
@@ -789,108 +789,108 @@ end
 -- ["CP3"] = Vector3.new(-1636.47, 992.97, 284.60),
 -- Kuat terhadap spasi dan baris baru.
 local function parseAndImport(text)
-    if not text or text == "" then
-        return false, "Input kosong."
-    end
+	if not text or text == "" then
+		return false, "Input kosong."
+	end
 
-    local count = 0
-    -- Pola: ["Nama"] = Vector3.new(X, Y, Z)
-    -- Tangkap grup: nama, x, y, z
-    for name, x, y, z in text:gmatch("%[\"(.-)\"%]%s*=%s*Vector3%.new%s*%(%s*([%-%.%d]+)%s*,%s*([%-%.%d]+)%s*,%s*([%-%.%d]+)%s*%)") do
-        local vx = tonumber(x)
-        local vy = tonumber(y)
-        local vz = tonumber(z)
-        if name ~= "" and vx and vy and vz then
-            bookmarks[name] = Vector3.new(vx, vy, vz)
-            count += 1
-        end
-    end
+	local count = 0
+	-- Pola: ["Nama"] = Vector3.new(X, Y, Z)
+	-- Tangkap grup: nama, x, y, z
+	for name, x, y, z in text:gmatch("%[\"(.-)\"%]%s*=%s*Vector3%.new%s*%(%s*([%-%.%d]+)%s*,%s*([%-%.%d]+)%s*,%s*([%-%.%d]+)%s*%)") do
+		local vx = tonumber(x)
+		local vy = tonumber(y)
+		local vz = tonumber(z)
+		if name ~= "" and vx and vy and vz then
+			bookmarks[name] = Vector3.new(vx, vy, vz)
+			count += 1
+		end
+	end
 
-    if count == 0 then
-        return false, "Tidak ada baris valid yang ditemukan. Pastikan formatnya benar."
-    end
+	if count == 0 then
+		return false, "Tidak ada baris valid yang ditemukan. Pastikan formatnya benar."
+	end
 
-    renderList()
-    switchTab("bookmark")
-    return true, ("Berhasil import %d bookmark."):format(count)
+	renderList()
+	switchTab("bookmark")
+	return true, ("Berhasil import %d bookmark."):format(count)
 end
 
 -- ==== Hook tombol Import ====
 importBtn.MouseButton1Click:Connect(function()
-    local ok, msg = parseAndImport(importBox.Text)
-    setStatus(msg, not ok)
+	local ok, msg = parseAndImport(importBox.Text)
+	setStatus(msg, not ok)
 end)
 
 -- **FUNGSI BARU**: Generate nama lokasi otomatis
 local function generateAutoName()
-    local maxNum = 0
-    -- Iterasi melalui semua bookmark untuk menemukan nomor "Lokasi" tertinggi
-    for name in pairs(bookmarks) do
-        local num = name:match("Lokasi (%d+)")
-        if num then
-            num = tonumber(num)
-            if num and num > maxNum then
-                maxNum = num
-            end
-        end
-    end
-    return "Lokasi " .. (maxNum + 1)
+	local maxNum = 0
+	-- Iterasi melalui semua bookmark untuk menemukan nomor "Lokasi" tertinggi
+	for name in pairs(bookmarks) do
+		local num = name:match("Lokasi (%d+)")
+		if num then
+			num = tonumber(num)
+			if num and num > maxNum then
+				maxNum = num
+			end
+		end
+	end
+	return "Lokasi " .. (maxNum + 1)
 end
 
 -- ==== FUNGSI Location Saver ====
 -- Simpan lokasi
 saveButton.MouseButton1Click:Connect(function()
-    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then 
-        saverStatusLabel.Text = "❌ Character belum siap!"
-        return 
-    end
+	if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then 
+		saverStatusLabel.Text = "❌ Character belum siap!"
+		return 
+	end
 
-    local pos = player.Character.HumanoidRootPart.Position
-    local name = saverTextBox.Text
+	local pos = player.Character.HumanoidRootPart.Position
+	local name = saverTextBox.Text
 
-    -- Cek jika nama lokasi kosong, maka generate otomatis
-    if name == "" then
-        name = generateAutoName()
-        saverStatusLabel.Text = "✅ Lokasi '" .. name .. "' tersimpan secara otomatis."
-    else
-        saverStatusLabel.Text = "✅ Lokasi '"..name.."' tersimpan dan ditambahkan ke bookmark."
-    end
+	-- Cek jika nama lokasi kosong, maka generate otomatis
+	if name == "" then
+		name = generateAutoName()
+		saverStatusLabel.Text = "✅ Lokasi '" .. name .. "' tersimpan secara otomatis."
+	else
+		saverStatusLabel.Text = "✅ Lokasi '"..name.."' tersimpan dan ditambahkan ke bookmark."
+	end
 
-    -- Simpan ke dalam bookmarks
-    bookmarks[name] = pos
-    savedLocations[name] = pos
-    
-    -- Tampilkan di tab bookmark
-    makeListItem(name, pos)
-    updateCanvasSize()
-    
-    saverTextBox.Text = "" -- reset setelah simpan
-    
-    -- Otomatis beralih ke tab bookmark
-    switchTab("bookmark")
+	-- Simpan ke dalam bookmarks
+	bookmarks[name] = pos
+	savedLocations[name] = pos
+
+	-- Tampilkan di tab bookmark
+	makeListItem(name, pos)
+	updateCanvasSize()
+
+	saverTextBox.Text = "" -- reset setelah simpan
+
+	-- Otomatis beralih ke tab bookmark
+	switchTab("bookmark")
 end)
 
 -- Print + Copy ke Clipboard (format tabel Lua)
 printButton.MouseButton1Click:Connect(function()
-    if next(bookmarks) == nil then
-        saverStatusLabel.Text = "⚠️ Tidak ada bookmark yang tersimpan."
-        return
-    end
+	if next(bookmarks) == nil then
+		saverStatusLabel.Text = "⚠️ Tidak ada bookmark yang tersimpan."
+		return
+	end
 
-    local result = "local Bookmarks = {\n"
-    for name, pos in pairs(bookmarks) do
-        result = result .. string.format('    ["%s"] = Vector3.new(%.2f, %.2f, %.2f),\n', name, pos.X, pos.Y, pos.Z)
-    end
-    result = result .. "}"
+	local result = "local Bookmarks = {\n"
+	for name, pos in pairs(bookmarks) do
+		result = result .. string.format('    ["%s"] = Vector3.new(%.2f, %.2f, %.2f),\n', name, pos.X, pos.Y, pos.Z)
+	end
+	result = result .. "}"
 
-    print("Hasil Lokasi:\n"..result)
+	print("Hasil Lokasi:\n"..result)
 
-    if setclipboard then
-        setclipboard(result)
-        saverStatusLabel.Text = "✅ Bookmark dicopy ke clipboard."
-    else
-        saverStatusLabel.Text = "❌ setclipboard tidak tersedia."
-    end
+	if setclipboard then
+		setclipboard(result)
+		saverStatusLabel.Text = "✅ Bookmark dicopy ke clipboard."
+	else
+		saverStatusLabel.Text = "❌ setclipboard tidak tersedia."
+	end
 end)
 
 -- ==== (Opsional) Isi contoh awal agar mudah tes ====
