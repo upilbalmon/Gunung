@@ -59,7 +59,7 @@ local currentSpeedModeIndex = 2 -- Dimulai dari "Normal" (indeks 2)
 -- State untuk Gravitasi Bulan
 local isMoonGravity = false
 local NORMAL_GRAVITY = workspace.Gravity
-local MOON_GRAVITY = 160
+local MOON_GRAVITY = 120
 
 -- State untuk Infinite Jump
 local isInfiniteJump = false
